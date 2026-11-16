@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TITITEAM - Camino del Éxito</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div class="max-w-4xl mx-auto space-y-6">
+
+        <!-- NAVEGACIÓN PRINCIPAL DE 3 PESTAÑAS -->
+        <nav class="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center gap-2 px-3">
+                <i class="ph-bold ph-barbell text-xl text-purple-600"></i>
+                <span class="font-extrabold text-slate-800 text-sm">TITITEAM</span>
+            </div>
+            <div class="flex gap-1.5 overflow-x-auto">
+                <button onclick="switchView('trainer')" id="btnTrainer" class="px-3.5 py-2 rounded-xl text-xs font-bold transition bg-purple-600 text-white shadow-sm flex items-center gap-1.5 cursor-pointer">
+                    <i class="ph-bold ph-user-gear"></i> GAUL
+                </button>
+                <button onclick="switchView('student')" id="btnStudent" class="px-3.5 py-2 rounded-xl text-xs font-bold transition bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center gap-1.5 cursor-pointer">
+                    <i class="ph-bold ph-user"></i> LeTITI
+                </button>
+                <button onclick="switchView('history')" id="btnHistory" class="px-3.5 py-2 rounded-xl text-xs font-bold transition bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center gap-1.5 cursor-pointer">
+                    <i class="ph-bold ph-clock-counter-clockwise"></i> camino del éxito
+                </button>
+            </div>
+        </nav>
+
+        <!-- ========================================== -->
+        <!-- VISTA 1: GAUL (CREAR Y GESTIONAR RUTINAS)  -->
+        <!-- ========================================== -->
+        <section id="trainerView" class="space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
+                    <div class="bg-purple-600 text-white p-3 rounded-xl shadow-md">
+                        <i class="ph-fill ph-folder-plus text-2xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-purple-600">Panel de GAUL</span>
+                        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Gestión y Creación de Rutinas</h1>
+                    </div>
+                </div>
+
+                <!-- Paso 1: Definir Nombre de la Rutina -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                    <label class="block text-xs font-bold text-slate-700 uppercase">Nombre de la Nueva Rutina / Día</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="routineNameInput" placeholder="Ej. Día 1: Tren Superior - Empuje" class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <button onclick="createNewRoutine()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-lg transition cursor-pointer">
+                            Crear Rutina
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Paso 2: Añadir Ejercicios a la Rutina Activa -->
+                <div class="bg-purple-50/50 p-4 rounded-xl border border-purple-200 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-extrabold uppercase text-purple-800 tracking-wider">Añadiendo ejercicios a: <span id="activeRoutineLabel" class="underline font-black">Ninguna seleccionada</span></span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        
+                        <!-- Miniatura Previsualizadora -->
+                        <div class="flex flex-col items-center justify-center bg-white p-3 rounded-xl border border-purple-200 shadow-2xs">
+                            <div class="w-24 h-24 bg-white rounded-lg border border-slate-200 p-1 mb-2 flex items-center justify-center overflow-hidden">
+                                <img id="previewImg" src="https://lh3.googleusercontent.com/d/1Al31CrypL-Q_MKFABa-OQuYfRWpA_m6Y" alt="Previsualización" class="w-full h-full object-contain">
+                            </div>
+                            <span id="previewCategory" class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-purple-50 text-purple-700 border border-purple-200 uppercase">
+                                Glúteo / Cadera
+                            </span>
+                        </div>
+
+                        <!-- Catálogo de 21 ejercicios -->
+                        <div class="md:col-span-2 space-y-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-700 uppercase mb-1">Catálogo Oficial (21 Ejercicios de Drive)</label>
+                                <select id="catalogSelect" onchange="updatePreview()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-medium text-slate-800">
+                                    <optgroup label="--- TREN INFERIOR Y CORE ---">
+                                        <option value="abducción" data-cat="Glúteo / Cadera" data-img="https://lh3.googleusercontent.com/d/1Al31CrypL-Q_MKFABa-OQuYfRWpA_m6Y">abducción</option>
+                                        <option value="crunch abdominal" data-cat="Abdomen" data-img="https://lh3.googleusercontent.com/d/1LvCp8AoQMjdZWs1zXrRNz2pwQQQ1dRW9">crunch abdominal</option>
+                                        <option value="extensión cuadriceps" data-cat="Cuádriceps" data-img="https://lh3.googleusercontent.com/d/13yMt_zeJNy6CxS6rn5ILtRON8hgrWnkv">extensión cuadriceps</option>
+                                        <option value="extension gemelo" data-cat="Pantorrillas" data-img="https://lh3.googleusercontent.com/d/18iryk72TOEtPRcw807uov09ab-0sEITn">extension gemelo</option>
+                                        <option value="extension lumbar" data-cat="Espalda Baja" data-img="https://lh3.googleusercontent.com/d/1D5UcRvNcqXe8jCQpIKPdsnFWbMG5n14t">extension lumbar</option>
+                                        <option value="femoral tumbado" data-cat="Isquiotibiales" data-img="https://lh3.googleusercontent.com/d/1H6q3Hdqfj48ixq1XZpfA0knrEDm_0Gxd">femoral tumbado</option>
+                                        <option value="isquio" data-cat="Isquiotibiales" data-img="https://lh3.googleusercontent.com/d/17-8GNTgQDH6h6M3dtMoGu7lkJ_UTz0w8">isquio</option>
+                                    </optgroup>
+                                    <optgroup label="--- TREN SUPERIOR - EMPUJE ---">
+                                        <option value="extensión triceps" data-cat="Tríceps" data-img="https://lh3.googleusercontent.com/d/1N66CAvEnTuPAqOLaclNvm5hKHQNpRORu">extensión triceps</option>
+                                        <option value="extensión hombro" data-cat="Hombros" data-img="https://lh3.googleusercontent.com/d/1Ohp9A0yij8kN-ETwZuIZXv18rAfudA6R">extensión hombro</option>
+                                        <option value="PecDEC" data-cat="Pectoral" data-img="https://lh3.googleusercontent.com/d/1Gl25zvB_8OVr9rhtFvhMq2jZPy0rjmwF">PecDEC</option>
+                                        <option value="Press Pectoral" data-cat="Pectoral" data-img="https://lh3.googleusercontent.com/d/1bykjtecU6U8qkysIjMmV_ty2y_7ilHsl">Press Pectoral</option>
+                                    </optgroup>
+                                    <optgroup label="--- TREN SUPERIOR - TRACCIÓN Y OTROS ---">
+                                        <option value="Biceps predicador" data-cat="Bíceps" data-img="https://lh3.googleusercontent.com/d/1I3yvlIWNueSWnrOSVvHpWPw9PMUHYifs">Biceps predicador</option>
+                                        <option value="biceps unilateral" data-cat="Bíceps" data-img="https://lh3.googleusercontent.com/d/1ShfWkzshT4Ti35ktu9DnFHMNkAPcNSZF">biceps unilateral</option>
+                                        <option value="dominadas guiadas" data-cat="Espalda / Bíceps" data-img="https://lh3.googleusercontent.com/d/1o9nbgEdGJ6rZp02DUo2C-9NbtSrpPdYi">dominadas guiadas</option>
+                                        <option value="extensión triceps predicador" data-cat="Tríceps" data-img="https://lh3.googleusercontent.com/d/1cumSP4ZWBsxYGjytpbaY-wa1owNTluW7">extensión triceps predicador</option>
+                                        <option value="Jalon al pecho" data-cat="Dorsal / Espalda" data-img="https://lh3.googleusercontent.com/d/11Z1q68ICfJ27k5dwjANBdn5d0A45rfu9">Jalon al pecho</option>
+                                        <option value="remo sentado" data-cat="Espalda Media" data-img="https://lh3.googleusercontent.com/d/1Kecnebn1xm96ydwZNmiUJKpuVGnkDJdo">remo sentado</option>
+                                        <option value="abducción 2" data-cat="Glúteo / Cadera" data-img="https://lh3.googleusercontent.com/d/1Al31CrypL-Q_MKFABa-OQuYfRWpA_m6Y">abducción 2</option>
+                                        <option value="extension gemelo 2" data-cat="Pantorrillas" data-img="https://lh3.googleusercontent.com/d/18iryk72TOEtPRcw807uov09ab-0sEITn">extension gemelo 2</option>
+                                        <option value="isquio 2" data-cat="Isquiotibiales" data-img="https://lh3.googleusercontent.com/d/17-8GNTgQDH6h6M3dtMoGu7lkJ_UTz0w8">isquio 2</option>
+                                        <option value="extensión triceps 2" data-cat="Tríceps" data-img="https://lh3.googleusercontent.com/d/1N66CAvEnTuPAqOLaclNvm5hKHQNpRORu">extensión triceps 2</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-700 uppercase mb-1">Series (Cant.)</label>
+                                    <input type="number" id="inputSets" value="4" min="1" max="10" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-2 text-sm text-center font-bold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-700 uppercase mb-1">Reps Objetivo</label>
+                                    <input type="text" id="inputReps" value="10-12" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-2 text-sm text-center font-bold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-700 uppercase mb-1">Descanso</label>
+                                    <input type="text" id="inputRest" value="90s" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-2 text-sm text-center font-bold">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-700 uppercase mb-1">Notas / Pautas Técnicas</label>
+                                <input type="text" id="inputNotes" placeholder="Ej. Controlar la bajada..." class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-medium text-slate-800">
+                            </div>
+
+                            <div class="flex justify-end pt-1">
+                                <button onclick="addExerciseToActiveRoutine()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-5 py-2.5 rounded-lg transition shadow-sm flex items-center gap-1.5 cursor-pointer">
+                                    <i class="ph-bold ph-plus"></i> Añadir a esta Rutina
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Listado de Rutinas Creadas -->
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-sm uppercase mb-3">Rutinas Registradas en el Sistema</h3>
+                    <div id="trainerRoutinesList" class="space-y-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VISTA 2: LeTITI (SEGUIMIENTO Y REGISTRO)   -->
+        <!-- ========================================== -->
+        <section id="studentView" class="space-y-6 hidden">
+            
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-emerald-600 text-white p-3 rounded-xl shadow-md">
+                        <i class="ph-fill ph-note-pencil text-2xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Panel de LeTITI</span>
+                        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Selecciona tu Rutina de Hoy</h1>
+                    </div>
+                </div>
+
+                <!-- Selector de Rutinas para LeTITI -->
+                <div class="w-full sm:w-72">
+                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Elegir Entrenamiento</label>
+                    <select id="studentRoutineSelect" onchange="loadStudentRoutine()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="">-- Selecciona una rutina --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Contenedor dinámico de ejercicios -->
+            <div id="studentExercisesContainer" class="space-y-4">
+                <div class="bg-white p-8 rounded-2xl text-center text-slate-400 text-sm border border-slate-200">
+                    Por favor, selecciona arriba una rutina creada por GAUL para empezar a registrar tus series.
+                </div>
+            </div>
+
+            <!-- Apartado de Impresiones Generales -->
+            <div id="studentGeneralImpressionsSection" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3 hidden">
+                <h3 class="font-extrabold text-slate-800 text-sm uppercase flex items-center gap-2">
+                    <i class="ph-bold ph-chat-teardrop-text text-emerald-600 text-lg"></i> Impresiones Generales del Entrenamiento
+                </h3>
+                <textarea id="generalImpressionsInput" rows="3" placeholder="¿Cómo te sentiste hoy? Sensaciones generales, nivel de energía..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                <div class="flex justify-end">
+                    <button onclick="saveTrainingSession()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-2.5 rounded-lg transition shadow-sm flex items-center gap-1.5 cursor-pointer">
+                        <i class="ph-bold ph-check text-sm"></i> Guardar Jornada Completa
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VISTA 3: CAMINO DEL ÉXITO (HISTORIAL)      -->
+        <!-- ========================================== -->
+        <section id="historyView" class="space-y-6 hidden">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
+                    <div class="bg-blue-600 text-white p-3 rounded-xl shadow-md">
+                        <i class="ph-fill ph-clock-counter-clockwise text-2xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-blue-600">Registro de Actividad</span>
+                        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">camino del éxito</h1>
+                    </div>
+                </div>
+
+                <div id="historyContainer" class="space-y-4">
+                    <div class="bg-slate-50 p-8 rounded-2xl text-center text-slate-400 text-sm border border-slate-200">
+                        Todavía no hay entrenamientos guardados. Completa una rutina en la pestaña "LeTITI" y pulsa en "Guardar Jornada Completa".
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- SCRIPT DE LÓGICA CON LOCALSTORAGE -->
+    <script>
+        // Cargar datos persistentes o valores por defecto
+        let routines = JSON.parse(localStorage.getItem('tititeam_routines')) || [
+            {
+                id: 1,
+                name: "Día 1: Tren Superior (Empuje)",
+                exercises: [
+                    { name: "extensión triceps", category: "Tríceps", sets: 3, reps: "10-12", rest: "90s", notes: "Mantener codos fijos.", img: "https://lh3.googleusercontent.com/d/1N66CAvEnTuPAqOLaclNvm5hKHQNpRORu" }
+                ]
+            }
+        ];
+
+        let activeRoutineId = parseInt(localStorage.getItem('tititeam_active_routine')) || (routines.length > 0 ? routines[0].id : 1);
+        let trainingHistory = JSON.parse(localStorage.getItem('tititeam_history')) || [];
+        let lastPersonalRecords = JSON.parse(localStorage.getItem('tititeam_records')) || {};
+
+        function saveDataToLocalStorage() {
+            localStorage.setItem('tititeam_routines', JSON.stringify(routines));
+            localStorage.setItem('tititeam_active_routine', activeRoutineId);
+            localStorage.setItem('tititeam_history', JSON.stringify(trainingHistory));
+            localStorage.setItem('tititeam_records', JSON.stringify(lastPersonalRecords));
+        }
+
+        function updatePreview() {
+            const select = document.getElementById('catalogSelect');
+            if (!select || select.selectedIndex === -1) return;
+            const opt = select.options[select.selectedIndex];
+            const imgEl = document.getElementById('previewImg');
+            const catEl = document.getElementById('previewCategory');
+            
+            if (imgEl && opt) imgEl.src = opt.getAttribute('data-img') || '';
+            if (catEl && opt) catEl.textContent = opt.getAttribute('data-cat') || '';
+        }
+
+        function switchView(view) {
+            const trainerView = document.getElementById('trainerView');
+            const studentView = document.getElementById('studentView');
+            const historyView = document.getElementById('historyView');
+            
+            const btnTrainer = document.getElementById('btnTrainer');
+            const btnStudent = document.getElementById('btnStudent');
+            const btnHistory = document.getElementById('btnHistory');
+
+            trainerView.classList.add('hidden');
+            studentView.classList.add('hidden');
+            historyView.classList.add('hidden');
+
+            btnTrainer.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center gap-1.5 cursor-pointer";
+            btnStudent.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center gap-1.5 cursor-pointer";
+            btnHistory.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center gap-1.5 cursor-pointer";
+
+            if (view === 'trainer') {
+                trainerView.classList.remove('hidden');
+                btnTrainer.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition bg-purple-600 text-white shadow-sm flex items-center gap-1.5 cursor-pointer";
+                renderTrainerRoutines();
+                updatePreview();
+            } else if (view === 'student') {
+                studentView.classList.remove('hidden');
+                btnStudent.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-sm flex items-center gap-1.5 cursor-pointer";
+                updateStudentSelect();
+            } else if (view === 'history') {
+                historyView.classList.remove('hidden');
+                btnHistory.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-sm flex items-center gap-1.5 cursor-pointer";
+                renderHistory();
+            }
+        }
+
+        function createNewRoutine() {
+            const nameInput = document.getElementById('routineNameInput');
+            if (!nameInput || !nameInput.value.trim()) {
+                alert("Escribe un nombre para la rutina.");
+                return;
+            }
+            const newRoutine = {
+                id: Date.now(),
+                name: nameInput.value.trim(),
+                exercises: []
+            };
+            routines.push(newRoutine);
+            activeRoutineId = newRoutine.id;
+            nameInput.value = "";
+            saveDataToLocalStorage();
+            renderTrainerRoutines();
+            alert("¡Rutina creada con éxito!");
+        }
+
+        function deleteRoutine(routineId) {
+            if (routines.length <= 1) {
+                alert("Debes mantener al menos una rutina en el sistema.");
+                return;
+            }
+            if (confirm("¿Estás seguro de que deseas eliminar esta rutina por completo?")) {
+                routines = routines.filter(r => r.id !== routineId);
+                if (activeRoutineId === routineId) {
+                    activeRoutineId = routines[0].id;
+                }
+                saveDataToLocalStorage();
+                renderTrainerRoutines();
+            }
+        }
+
+        function deleteExerciseFromRoutine(routineId, exerciseIndex) {
+            const routine = routines.find(r => r.id === routineId);
+            if (routine) {
+                routine.exercises.splice(exerciseIndex, 1);
+                saveDataToLocalStorage();
+                renderTrainerRoutines();
+            }
+        }
+
+        function renderTrainerRoutines() {
+            const list = document.getElementById('trainerRoutinesList');
+            const label = document.getElementById('activeRoutineLabel');
+            if (!list) return;
+            list.innerHTML = "";
+
+            if (routines.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-400">No hay rutinas creadas todavía.</p>`;
+                if (label) label.textContent = "Ninguna";
+                return;
+            }
+
+            if (!routines.some(r => r.id === activeRoutineId)) {
+                activeRoutineId = routines[0].id;
+            }
+
+            const active = routines.find(r => r.id === activeRoutineId);
+            if (label) label.textContent = active ? active.name : "Ninguna";
+
+            routines.forEach(r => {
+                const item = document.createElement('div');
+                item.className = `p-4 rounded-xl border space-y-3 ${r.id === activeRoutineId ? 'bg-purple-50/40 border-purple-300 ring-1 ring-purple-300' : 'bg-white border-slate-200'}`;
+                
+                let exercisesHTML = '';
+                if (r.exercises.length === 0) {
+                    exercisesHTML = `<p class="text-xs text-slate-400 italic">No hay ejercicios agregados en esta rutina todavía.</p>`;
+                } else {
+                    r.exercises.forEach((ex, idx) => {
+                        exercisesHTML += `
+                            <div class="bg-white p-3 rounded-xl border border-slate-200 flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 bg-white rounded-lg border border-slate-200 p-1 flex items-center justify-center shrink-0">
+                                        <img src="${ex.img}" alt="${ex.name}" class="w-full h-full object-contain">
+                                    </div>
+                                    <div>
+                                        <span class="text-[9px] font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-700">${ex.category}</span>
+                                        <h4 class="text-xs font-bold text-slate-800">${ex.name}</h4>
+                                        <span class="text-[10px] text-slate-500">Series: ${ex.sets} | Reps: ${ex.reps} | Descanso: ${ex.rest}</span>
+                                    </div>
+                                </div>
+                                <button onclick="deleteExerciseFromRoutine(${r.id}, ${idx})" class="text-rose-500 hover:text-rose-700 p-1.5 cursor-pointer text-xs" title="Quitar ejercicio">
+                                    <i class="ph-bold ph-x text-sm"></i>
+                                </button>
+                            </div>
+                        `;
+                    });
+                }
+
+                item.innerHTML = `
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2 border-b border-slate-100">
+                        <div>
+                            <strong class="text-sm font-bold text-slate-900">${r.name}</strong>
+                            <span class="text-xs text-slate-500 ml-2">(${r.exercises.length} ejercicios)</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="activeRoutineId = ${r.id}; saveDataToLocalStorage(); renderTrainerRoutines();" class="text-xs font-bold px-3 py-1.5 rounded-lg ${r.id === activeRoutineId ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'} cursor-pointer">
+                                ${r.id === activeRoutineId ? 'Rutina Activa para Editar' : 'Seleccionar'}
+                            </button>
+                            <button onclick="deleteRoutine(${r.id})" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 cursor-pointer flex items-center gap-1">
+                                <i class="ph-bold ph-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        ${exercisesHTML}
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function addExerciseToActiveRoutine() {
+            const active = routines.find(r => r.id === activeRoutineId);
+            if (!active) {
+                alert("Selecciona o crea una rutina primero.");
+                return;
+            }
+
+            const select = document.getElementById('catalogSelect');
+            if (!select || select.selectedIndex === -1) return;
+            const opt = select.options[select.selectedIndex];
+
+            const setsCount = parseInt(document.getElementById('inputSets').value) || 3;
+
+            active.exercises.push({
+                name: opt.value,
+                category: opt.getAttribute('data-cat'),
+                sets: setsCount,
+                reps: document.getElementById('inputReps').value,
+                rest: document.getElementById('inputRest').value,
+                notes: document.getElementById('inputNotes').value || "Sin notas adicionales.",
+                img: opt.getAttribute('data-img')
+            });
+
+            document.getElementById('inputNotes').value = "";
+            saveDataToLocalStorage();
+            renderTrainerRoutines();
+        }
+
+        function updateStudentSelect() {
+            const select = document.getElementById('studentRoutineSelect');
+            if (!select) return;
+            select.innerHTML = '<option value="">-- Selecciona una rutina --</option>';
+            
+            routines.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.id;
+                opt.textContent = r.name;
+                select.appendChild(opt);
+            });
+        }
+
+        function loadStudentRoutine() {
+            const routineId = document.getElementById('studentRoutineSelect').value;
+            const container = document.getElementById('studentExercisesContainer');
+            const generalSection = document.getElementById('studentGeneralImpressionsSection');
+            if (!container) return;
+            container.innerHTML = "";
+
+            if (!routineId) {
+                container.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center text-slate-400 text-sm border border-slate-200">Por favor, selecciona una rutina válida en la parte superior.</div>`;
+                if (generalSection) generalSection.classList.add('hidden');
+                return;
+            }
+
+            const routine = routines.find(r => r.id == routineId);
+            if (!routine || routine.exercises.length === 0) {
+                container.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center text-slate-400 text-sm border border-slate-200">Esta rutina no tiene ejercicios asignados todavía.</div>`;
+                if (generalSection) generalSection.classList.add('hidden');
+                return;
+            }
+
+            if (generalSection) generalSection.classList.remove('hidden');
+
+            routine.exercises.forEach((ex) => {
+                const lastRecord = lastPersonalRecords[ex.name];
+
+                let setsInputsHTML = '';
+                for (let i = 0; i < ex.sets; i++) {
+                    const prevSeriesData = lastRecord && lastRecord[i] ? lastRecord[i] : { weight: '', reps: '' };
+                    const placeholderWeight = prevSeriesData.weight ? `Anterior: ${prevSeriesData.weight}kg` : 'Ej. 50';
+                    const placeholderReps = prevSeriesData.reps ? `Anterior: ${prevSeriesData.reps}` : 'Ej. 12';
+
+                    setsInputsHTML += `
+                        <div class="grid grid-cols-12 gap-2 items-center bg-white p-2 rounded-lg border border-emerald-100 set-row" data-set-index="${i}">
+                            <div class="col-span-3 text-xs font-extrabold text-emerald-800">
+                                Serie ${i + 1}
+                            </div>
+                            <div class="col-span-4">
+                                <input type="number" placeholder="${placeholderWeight}" class="input-set-weight w-full bg-slate-50 border border-emerald-300 rounded px-2 py-1 text-xs font-bold text-slate-800" value="${prevSeriesData.weight}">
+                            </div>
+                            <div class="col-span-5">
+                                <input type="text" placeholder="${placeholderReps}" class="input-set-reps w-full bg-slate-50 border border-emerald-300 rounded px-2 py-1 text-xs font-bold text-slate-800" value="${prevSeriesData.reps}">
+                            </div>
+                        </div>
+                    `;
+                }
+
+                let lastSummaryText = 'Ningún registro previo';
+                if (lastRecord && lastRecord.length > 0) {
+                    lastSummaryText = lastRecord.map((s, idx) => `S${idx+1}: ${s.weight || 0}kg/${s.reps || '-'}r`).join(' | ');
+                }
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col md:flex-row exercise-card-item";
+                card.dataset.exerciseName = ex.name;
+
+                card.innerHTML = `
+                    <div class="p-5 md:w-72 bg-slate-50/50 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col items-center justify-center text-center">
+                        <div class="w-32 h-32 bg-white rounded-xl border border-slate-200 p-2 shadow-xs mb-3 flex items-center justify-center overflow-hidden">
+                            <img src="${ex.img}" alt="${ex.name}" class="w-full h-full object-contain">
+                        </div>
+                        <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200 mb-1">
+                            ${ex.category}
+                        </span>
+                        <h3 class="font-bold text-slate-900 text-base leading-snug">${ex.name}</h3>
+                        
+                        <div class="mt-2.5 bg-blue-50 border border-blue-200 rounded-lg p-1.5 w-full text-center">
+                            <span class="block text-[9px] font-bold uppercase text-blue-600">Última Sesión</span>
+                            <span class="text-[10px] font-extrabold text-blue-900 leading-tight block">${lastSummaryText}</span>
+                        </div>
+                    </div>
+
+                    <div class="p-5 flex-1 flex flex-col justify-between gap-4">
+                        <div class="bg-purple-50/60 border-l-4 border-purple-600 p-3.5 rounded-r-xl">
+                            <span class="text-[11px] font-extrabold uppercase text-purple-700 tracking-wider block mb-1">Prescripción de GAUL (${ex.sets} Series)</span>
+                            <div class="grid grid-cols-3 gap-2 text-center mb-2">
+                                <div class="bg-white p-1.5 rounded border border-purple-100"><span class="block text-[10px] text-slate-400 uppercase">Series</span><strong class="text-slate-800 text-sm">${ex.sets}</strong></div>
+                                <div class="bg-white p-1.5 rounded border border-purple-100"><span class="block text-[10px] text-slate-400 uppercase">Reps Obj</span><strong class="text-slate-800 text-sm">${ex.reps}</strong></div>
+                                <div class="bg-white p-1.5 rounded border border-purple-100"><span class="block text-[10px] text-slate-400 uppercase">Descanso</span><strong class="text-slate-800 text-sm">${ex.rest}</strong></div>
+                            </div>
+                            <div class="text-xs text-slate-600"><em>"${ex.notes}"</em></div>
+                        </div>
+
+                        <div class="bg-emerald-50/60 border-l-4 border-emerald-600 p-3.5 rounded-r-xl space-y-2.5">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[11px] font-extrabold uppercase text-emerald-700 tracking-wider">Registro por Series (Carga y Reps)</span>
+                            </div>
+                            
+                            <div class="space-y-1.5 sets-container">
+                                ${setsInputsHTML}
+                            </div>
+
+                            <div class="pt-1">
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Impresiones del Ejercicio</label>
+                                <input type="text" placeholder="Ej. Sensación excelente, buena congestión..." class="input-impressions w-full bg-white border border-emerald-300 rounded-lg px-3 py-1.5 text-xs text-slate-800">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function saveTrainingSession() {
+            const routineId = document.getElementById('studentRoutineSelect').value;
+            const routine = routines.find(r => r.id == routineId);
+            if (!routine) return;
+
+            const cards = document.querySelectorAll('.exercise-card-item');
+            let sessionExercises = [];
+            const currentDate = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+            cards.forEach((card, idx) => {
+                const exName = card.dataset.exerciseName;
+                const impressions = card.querySelector('.input-impressions').value || 'Sin comentarios';
+                const originalEx = routine.exercises[idx];
+
+                const setRows = card.querySelectorAll('.set-row');
+                let exerciseSetsData = [];
+
+                setRows.forEach(row => {
+                    const weight = row.querySelector('.input-set-weight').value || '0';
+                    const reps = row.querySelector('.input-set-reps').value || '-';
+                    exerciseSetsData.push({ weight, reps });
+                });
+
+                lastPersonalRecords[exName] = exerciseSetsData;
+
+                sessionExercises.push({
+                    name: exName,
+                    category: originalEx.category,
+                    setsData: exerciseSetsData,
+                    impressions: impressions,
+                    img: originalEx.img
+                });
+            });
+
+            const generalImpressions = document.getElementById('generalImpressionsInput').value || 'Sin impresiones generales.';
+
+            trainingHistory.unshift({
+                date: currentDate,
+                routineName: routine.name,
+                generalImpressions: generalImpressions,
+                exercises: sessionExercises
+            });
+
+            saveDataToLocalStorage();
+            document.getElementById('generalImpressionsInput').value = "";
+            alert("¡Entrenamiento guardado con éxito! Se han registrado tus series en el camino del éxito.");
+            loadStudentRoutine();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyContainer');
+            if (!container) return;
+            container.innerHTML = "";
+
+            if (trainingHistory.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-slate-50 p-8 rounded-2xl text-center text-slate-400 text-sm border border-slate-200">
+                        Todavía no hay entrenamientos guardados. Completa una rutina en la pestaña "LeTITI" y pulsa en "Guardar Jornada Completa".
+                    </div>
+                `;
+                return;
+            }
+
+            trainingHistory.forEach((session) => {
+                const sessionCard = document.createElement('div');
+                sessionCard.className = "bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4";
+
+                let exercisesHistoryHTML = '';
+                session.exercises.forEach(ex => {
+                    let setsDetailHTML = ex.setsData.map((s, i) => `<span class="inline-block bg-slate-100 px-2 py-0.5 rounded mr-1 text-[10px]">S${i+1}: <strong>${s.weight}kg</strong> / <strong>${s.reps}r</strong></span>`).join('');
+
+                    exercisesHistoryHTML += `
+                        <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-2">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-white rounded-lg border border-slate-200 p-1 flex items-center justify-center shrink-0">
+                                        <img src="${ex.img}" alt="${ex.name}" class="w-full h-full object-contain">
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-800">${ex.name}</h4>
+                                        <div class="flex flex-wrap gap-1 mt-1">${setsDetailHTML}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-[11px] text-slate-500 italic pl-13">
+                                Notas: "${ex.impressions}"
+                            </div>
+                        </div>
+                    `;
+                });
+
+                sessionCard.innerHTML = `
+                    <div class="flex justify-between items-start pb-3 border-b border-slate-200">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-blue-100 text-blue-700">${session.routineName}</span>
+                            <h3 class="text-sm font-extrabold text-slate-900 mt-1">Jornada del ${session.date}</h3>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <span class="text-[11px] font-bold uppercase text-slate-600 block">Desglose por Series y Ejercicios:</span>
+                        ${exercisesHistoryHTML}
+                    </div>
+                    <div class="bg-blue-50/60 p-3 rounded-xl border border-blue-100 text-xs text-slate-700">
+                        <strong>Impresiones Generales:</strong> <em>"${session.generalImpressions}"</em>
+                    </div>
+                `;
+                container.appendChild(sessionCard);
+            });
+        }
+
+        // Inicializar al cargar la página
+        document.addEventListener("DOMContentLoaded", () => {
+            renderTrainerRoutines();
+            updatePreview();
+        });
+    </script>
+
+</body>
+</html>
